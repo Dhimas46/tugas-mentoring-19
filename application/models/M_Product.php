@@ -13,6 +13,27 @@ class M_Product extends CI_Model {
         // $this->db->order_by("id_siswa", "DESC");
         return $this->db->get();
     }
+	public function delete_product($product_id)
+    {
+        $this->db->where('id', $product_id);
+        $this->db->delete('products');
+        return true; 
+    }
+
+	public function insert_product($data) {
+        $this->db->insert('products', $data);
+        return $this->db->affected_rows() > 0;
+    }
+	public function get_product_ingredients($product_id)
+{
+    $this->db->select('*');
+    $this->db->from('product_ingredients');
+    $this->db->where('product_id', $product_id);
+    $query = $this->db->get();
+
+    return $query->result();
+}
+
 
   
 

@@ -156,7 +156,7 @@
                       <div class="row">
                           <div class="col-md-2">
                             <button style="width: 120px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#productModal">
-                              Product
+                              Pilih Produk
                             </button>
                           </div>
                           <div class="col-3">
@@ -179,7 +179,7 @@
                       <div class="row">
                           <div class="col-md-2">
                             <button id="bahanButton" style="width: 120px" type="button" class="btn btn-primary">
-                              Bahan
+                              Pilih Bahan
                             </button>
                           </div>
                           <div class="col-3">
@@ -201,7 +201,7 @@
                     </div>
                     <div class="card-footer">
                       <div class="float-right">
-                        <button type="submit" class="btn btn-primary" > <i class="fa fa-save"></i>
+                        <button type="submit" id="tambahkan" class="btn btn-primary" > <i class="fa fa-save"></i>
                           Tambahkan
                         </button>
                       </div>
@@ -311,12 +311,16 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Data Product</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Data Produk</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
+			
       </div>
       <div class="modal-body table-responsive">
+		<div class="mb-3">
+		<a id="createProduct" class="btn btn-success"><i class="fa fa-plus"></i> Tambah Produk</a>
+		</div>
           <table style="width: 100%" class="table table-bordered" id="productTable">
               <thead>
                   <tr>
@@ -373,3 +377,118 @@
            </div>
        </div>
    </div>
+	 
+
+
+<!--Modal Product-->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg " role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Tambah Produk</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+			
+      </div>
+			<form id="productForm" method="post">
+		
+      <div class="modal-body">
+			<div class="row">
+				<div class="col-md-3">
+				<div class="mb-3">
+							 	<label for="">Kode Produk</label> <span class="text-danger ms-1">*</span>
+								<input type="text" name="kode_bahan" class="form-control" placeholder="HB6GTY" maxlength="6">
+					</div>
+				</div>
+				<div class="col-md-9">
+				<div class="mb-3">
+							 	<label for="">Nama Produk</label> <span class="text-danger ms-1">*</span>
+								<input type="text" name="product_name" class="form-control" placeholder="Burger" >
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+				<div class="mb-3">
+						<label for="category_id">Kategori produk</label> <span class="text-danger ms-1">*</span>
+						<select name="category_id" class="form-control" id="category_id">
+								<?php foreach ($categories as $category): ?>
+										<option value="<?php echo $category->category_id; ?>"><?php echo $category->category_name; ?></option>
+								<?php endforeach; ?>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6">
+				<div class="mb-3">
+							 	<label for="">Quantity</label> <span class="text-danger ms-1">*</span>
+								<input type="number" name="quantity" class="form-control"  min="1">
+					</div>
+				</div>
+			</div>
+			<div class="mb-3">
+							 	<label for="">Deskripsi</label> 
+								<textarea name="deskripsi" class="form-control" cols="30" rows="4"></textarea>
+			</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"> <i class="fa fa-save"></i> Simpan</button>
+      </div>
+			</form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    var baseUrl = '<?= base_url() ?>';
+</script>
+
+<script>
+$(document).ready(function() {
+    $('#productForm').submit(function(event) {
+        event.preventDefault();
+
+        var formData = $(this).serialize(); 
+        var url = baseUrl + 'index.php/products/create'; 
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Data berhasil disimpan.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $('#createModal').modal('hide'); 
+														$('#productForm')[0].reset();
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function(error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Gagal menyimpan data.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+});
+
+</script>
